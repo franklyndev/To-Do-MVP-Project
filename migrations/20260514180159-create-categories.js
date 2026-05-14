@@ -10,14 +10,18 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       name: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       user_id: {
+        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
-          model: 'user',
+          model: 'users',
           key: 'id'
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       createdAt: {
         allowNull: false,

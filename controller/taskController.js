@@ -1,16 +1,19 @@
-const {taks } = require('../models');
+const { Task } = require('../models');
 
 const tasksController = {
 
-    taskCreate(req, res) {
+    async taskCreate(req, res) {
         try {
-            const { title, description, status, completed, priority } = req.body;
-            const newTask = Task.create({
+            const { title, description, completed, priority, category_id } = req.body;
+            const user_id = req.user?.userId || req.body.user_id;
+
+            const newTask = await Task.create({
+                user_id,
+                category_id,
                 title,
                 description,
                 priority,
-                completed,
-                status
+                completed
             });
             res.status(201).json(newTask);
         } catch (error) {
@@ -18,34 +21,34 @@ const tasksController = {
         }
     },
 
-    taskList(req, res) {
+    async taskList(req, res) {
         try {
-            const tasks = Task.findAll();
+            const tasks = await Task.findAll();
             res.status(200).json(tasks);
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
     },
 
-    taskUpdate(req, res) {
+    async taskUpdate(req, res) {
         try {
             const { id } = req.params;
-            const { title, description, status, priority } = req.body;
-            const task = Task.findByPk(id);
+            const { title, description, completed, priority, category_id } = req.body;
+            const task = await Task.findByPk(id);
             if (!task) {
                 return res.status(404).json({ message: 'Task not found' });
             }
-            await task.update({ title, description, status, priority });
+            await task.update({ title, description, completed, priority, category_id });
             res.status(200).json(task);
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
     },
 
-    taskDelete(req, res) {
+    async taskDelete(req, res) {
         try {
             const { id } = req.params;
-            const task = Task.findByPk(id);
+            const task = await Task.findByPk(id);
             if (!task) {
                 return res.status(404).json({ message: 'Task not found' });
             }
@@ -57,3 +60,5 @@ const tasksController = {
     }
 
 };
+
+module.exports = tasksController;
