@@ -2,7 +2,7 @@ const { Task } = require('../models');
 
 const tasksController = {
 
-    async taskCreate(req, res) {
+    async store(req, res) {
         try {
             const { title, description, completed, priority, category_id } = req.body;
             const user_id = req.user?.userId || req.body.user_id;
@@ -29,7 +29,7 @@ const tasksController = {
         }
     },
 
-    async taskList(req, res) {
+    async index(req, res) {
         try {
             const tasks = await Task.findAll();
             res.status(200).json(tasks);
@@ -38,7 +38,7 @@ const tasksController = {
         }
     },
 
-    async taskFindById(req, res) {
+    async show(req, res) {
         try {
             const { id } = req.params;
             const task = await Task.findByPk(id);
@@ -53,7 +53,7 @@ const tasksController = {
         }
     },
 
-    async taskUpdate(req, res) {
+    async update(req, res) {
         try {
             const { id } = req.params;
             const { title, description, completed, priority, category_id } = req.body;
@@ -68,7 +68,7 @@ const tasksController = {
         }
     },
 
-    async taskDelete(req, res) {
+    async destroy(req, res) {
         try {
             const { id } = req.params;
             const task = await Task.findByPk(id);

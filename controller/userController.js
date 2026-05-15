@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 
 const userController = {
     
-    async userCreate(req, res) {
+    async store(req, res) {
         try {
             const { name, email, password } = req.body;
             const hashedPassword = await bcrypt.hash(password, 10);
@@ -18,7 +18,7 @@ const userController = {
         }
     },
 
-    async userFindAll(req, res) {
+    async index(req, res) {
         try {
             const users = await User.findAll();
             res.status(200).json(users);
@@ -55,7 +55,7 @@ const userController = {
         }
     },
 
-    async deleteUser(req, res) {
+    async destroy(req, res) {
         try {
             const { userId } = req.user;
             const { password } = req.body;
