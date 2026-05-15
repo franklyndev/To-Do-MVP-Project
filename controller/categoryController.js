@@ -1,7 +1,7 @@
 const { Category } = require('../models');
 
 const categoryController = {
-    async categoryCreate(req, res) {
+    async store(req, res) {
         try {
             const { name } = req.body;
             const user_id = req.user?.userId || req.body.user_id;
@@ -25,7 +25,7 @@ const categoryController = {
         }
     },
 
-    async categoryList(req, res) {
+    async index(req, res) {
         try {
             const categories = await Category.findAll();
             res.status(200).json(categories);
@@ -34,7 +34,7 @@ const categoryController = {
         }
     },
 
-    async categoryFindById(req, res) {
+    async show(req, res) {
         try {
             const { id } = req.params;
             const category = await Category.findByPk(id);
@@ -49,7 +49,7 @@ const categoryController = {
         }
     },
 
-    async categoryUpdate(req, res) {
+    async update(req, res) {
         try {
             const { id } = req.params;
             const { name } = req.body;
@@ -66,7 +66,7 @@ const categoryController = {
         }
     },
 
-    async categoryDelete(req, res) {
+    async destroy(req, res) {
         try {
             const { id } = req.params;
             const category = await Category.findByPk(id);
