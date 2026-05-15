@@ -6,7 +6,7 @@ const router = express.Router();
 
 // Rotas públicas
 router.post('/users', userController.store);
-router.get('/users', userController.index);
+router.get('/users', authMiddleware, userController.index);
 
 // Rotas protegidas (requerem autenticação JWT)
 router.patch('/users/:id/password', authMiddleware, userController.changePassword);

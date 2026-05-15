@@ -2,13 +2,24 @@ const jwt = require('jsonwebtoken');
 
 const authMiddleware = (req, res, next) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1];
+        const authHeader = req.headers.authorization;
 
-        if (!token) {
+        if (!authHeader) {
             return res.status(401).json({ message: 'Token não fornecido' });
         }
 
+        const [scheme, token] = authHeader.split(' ');
+
+        if (scheme !== 'Bearer' || !token) {
+            return res.status(401).json({ message: 'Formato do token inválido' });
+        }
+
         const decoded = jwt.verify(token, process.env.JWT_SECRET || 'seu_segredo_jwt');
+
+        if (!decoded.userId) {
+            return res.status(401).json({ message: 'Token inválido' });
+        }
+
         req.user = decoded;
         next();
     } catch (error) {

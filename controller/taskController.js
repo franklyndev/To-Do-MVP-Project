@@ -1,22 +1,31 @@
-const { Task } = require('../models');
+const { Category, Task } = require('../models');
 
 const tasksController = {
 
     async store(req, res) {
         try {
             const { title, description, completed, priority, category_id } = req.body;
-            const user_id = req.user?.userId || req.body.user_id;
+            const { userId } = req.user;
 
             if (!title) {
                 return res.status(400).json({ message: 'Título da task é obrigatório' });
             }
 
-            if (!user_id) {
-                return res.status(400).json({ message: 'user_id é obrigatório' });
+            if (category_id) {
+                const category = await Category.findOne({
+                    where: {
+                        id: category_id,
+                        user_id: userId
+                    }
+                });
+
+                if (!category) {
+                    return res.status(400).json({ message: 'Categoria inválida para este usuário' });
+                }
             }
 
             const newTask = await Task.create({
-                user_id,
+                user_id: userId,
                 category_id,
                 title,
                 description,
@@ -31,7 +40,8 @@ const tasksController = {
 
     async index(req, res) {
         try {
-            const tasks = await Task.findAll();
+            const { userId } = req.user;
+            const tasks = await Task.findAll({ where: { user_id: userId } });
             res.status(200).json(tasks);
         } catch (error) {
             res.status(500).json({ message: error.message });
@@ -41,7 +51,13 @@ const tasksController = {
     async show(req, res) {
         try {
             const { id } = req.params;
-            const task = await Task.findByPk(id);
+            const { userId } = req.user;
+            const task = await Task.findOne({
+                where: {
+                    id,
+                    user_id: userId
+                }
+            });
 
             if (!task) {
                 return res.status(404).json({ message: 'Task not found' });
@@ -57,10 +73,30 @@ const tasksController = {
         try {
             const { id } = req.params;
             const { title, description, completed, priority, category_id } = req.body;
-            const task = await Task.findByPk(id);
+            const { userId } = req.user;
+            const task = await Task.findOne({
+                where: {
+                    id,
+                    user_id: userId
+                }
+            });
             if (!task) {
                 return res.status(404).json({ message: 'Task not found' });
             }
+
+            if (category_id) {
+                const category = await Category.findOne({
+                    where: {
+                        id: category_id,
+                        user_id: userId
+                    }
+                });
+
+                if (!category) {
+                    return res.status(400).json({ message: 'Categoria inválida para este usuário' });
+                }
+            }
+
             await task.update({ title, description, completed, priority, category_id });
             res.status(200).json(task);
         } catch (error) {
@@ -71,7 +107,13 @@ const tasksController = {
     async destroy(req, res) {
         try {
             const { id } = req.params;
-            const task = await Task.findByPk(id);
+            const { userId } = req.user;
+            const task = await Task.findOne({
+                where: {
+                    id,
+                    user_id: userId
+                }
+            });
             if (!task) {
                 return res.status(404).json({ message: 'Task not found' });
             }

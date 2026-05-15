@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const db = require('./models');
+const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
@@ -12,6 +13,7 @@ const app = express();
 app.use(express.json());
 
 // Rotas
+app.use('/api', authRoutes);
 app.use('/api', userRoutes);
 app.use('/api', taskRoutes);
 app.use('/api', categoryRoutes);
