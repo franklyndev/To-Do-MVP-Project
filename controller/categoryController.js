@@ -1,22 +1,18 @@
 const { Category } = require('../models');
 
 const categoryController = {
-    async categoryCreate(req, res) {
+    async store(req, res) {
         try {
             const { name } = req.body;
-            const user_id = req.user?.userId || req.body.user_id;
+            const { userId } = req.user;
 
             if (!name) {
                 return res.status(400).json({ message: 'Nome da categoria é obrigatório' });
             }
 
-            if (!user_id) {
-                return res.status(400).json({ message: 'user_id é obrigatório' });
-            }
-
             const newCategory = await Category.create({
                 name,
-                user_id
+                user_id: userId
             });
 
             res.status(201).json(newCategory);
@@ -25,19 +21,26 @@ const categoryController = {
         }
     },
 
-    async categoryList(req, res) {
+    async index(req, res) {
         try {
-            const categories = await Category.findAll();
+            const { userId } = req.user;
+            const categories = await Category.findAll({ where: { user_id: userId } });
             res.status(200).json(categories);
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
     },
 
-    async categoryFindById(req, res) {
+    async show(req, res) {
         try {
             const { id } = req.params;
-            const category = await Category.findByPk(id);
+            const { userId } = req.user;
+            const category = await Category.findOne({
+                where: {
+                    id,
+                    user_id: userId
+                }
+            });
 
             if (!category) {
                 return res.status(404).json({ message: 'Categoria não encontrada' });
@@ -49,11 +52,17 @@ const categoryController = {
         }
     },
 
-    async categoryUpdate(req, res) {
+    async update(req, res) {
         try {
             const { id } = req.params;
             const { name } = req.body;
-            const category = await Category.findByPk(id);
+            const { userId } = req.user;
+            const category = await Category.findOne({
+                where: {
+                    id,
+                    user_id: userId
+                }
+            });
 
             if (!category) {
                 return res.status(404).json({ message: 'Categoria não encontrada' });
@@ -66,10 +75,16 @@ const categoryController = {
         }
     },
 
-    async categoryDelete(req, res) {
+    async destroy(req, res) {
         try {
             const { id } = req.params;
-            const category = await Category.findByPk(id);
+            const { userId } = req.user;
+            const category = await Category.findOne({
+                where: {
+                    id,
+                    user_id: userId
+                }
+            });
 
             if (!category) {
                 return res.status(404).json({ message: 'Categoria não encontrada' });

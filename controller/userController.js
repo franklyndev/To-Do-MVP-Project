@@ -3,24 +3,48 @@ const bcrypt = require('bcrypt');
 
 const userController = {
     
-    async userCreate(req, res) {
+    async store(req, res) {
         try {
             const { name, email, password } = req.body;
+
+            if (!name || !email || !password) {
+                return res.status(400).json({ message: 'Nome, email e senha são obrigatórios' });
+            }
+
+            if (password.length < 6) {
+                return res.status(400).json({ message: 'A senha deve ter no mínimo 6 caracteres' });
+            }
+
+            const userAlreadyExists = await User.findOne({ where: { email } });
+
+            if (userAlreadyExists) {
+                return res.status(409).json({ message: 'Email já cadastrado' });
+            }
+
             const hashedPassword = await bcrypt.hash(password, 10);
             const newUser = await User.create({
                 name,
                 email,
                 password: hashedPassword
             });
-            res.status(201).json(newUser);
+
+            res.status(201).json({
+                id: newUser.id,
+                name: newUser.name,
+                email: newUser.email,
+                createdAt: newUser.createdAt,
+                updatedAt: newUser.updatedAt
+            });
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
     },
 
-    async userFindAll(req, res) {
+    async index(req, res) {
         try {
-            const users = await User.findAll();
+            const users = await User.findAll({
+                attributes: { exclude: ['password'] }
+            });
             res.status(200).json(users);
         } catch (error) {
             res.status(500).json({ message: error.message });
@@ -55,7 +79,7 @@ const userController = {
         }
     },
 
-    async deleteUser(req, res) {
+    async destroy(req, res) {
         try {
             const { userId } = req.user;
             const { password } = req.body;
