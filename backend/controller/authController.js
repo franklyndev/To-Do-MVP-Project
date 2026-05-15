@@ -24,7 +24,7 @@ const authController = {
             }
 
             const token = jwt.sign(
-                { userId: user.id },
+                { userId: user.id, role: user.role },
                 process.env.JWT_SECRET || 'seu_segredo_jwt',
                 { expiresIn: '1d' }
             );
@@ -33,7 +33,8 @@ const authController = {
                 user: {
                     id: user.id,
                     name: user.name,
-                    email: user.email
+                    email: user.email,
+                    role: user.role
                 },
                 token
             });

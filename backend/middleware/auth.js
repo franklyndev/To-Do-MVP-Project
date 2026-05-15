@@ -33,4 +33,12 @@ const authMiddleware = (req, res, next) => {
     }
 };
 
+const authorizeAdmin = (req, res, next) => {
+    if (!req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Acesso negado: somente administradores podem acessar este recurso' });
+    }
+    next();
+};
+
 module.exports = authMiddleware;
+module.exports.authorizeAdmin = authorizeAdmin;

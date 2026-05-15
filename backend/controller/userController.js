@@ -25,7 +25,8 @@ const userController = {
             const newUser = await User.create({
                 name,
                 email,
-                password: hashedPassword
+                password: hashedPassword,
+                role: 'user'
             });
 
             res.status(201).json({
