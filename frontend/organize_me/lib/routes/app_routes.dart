@@ -1,3 +1,5 @@
+import 'package:organize_me/presentation/tela_login.dart';
+
 import '../core/app_export.dart';
 import 'package:get/get.dart';
 import '../presentation/create_account_screen/create_account_screen.dart';
@@ -14,8 +16,9 @@ class AppRoutes {
   static const String dailyTasksDashboardScreen =
       '/daily_tasks_dashboard_screen';
 
+  static const String loginScreen = '/tela_login';
   static const String appNavigationScreen = '/app_navigation_screen';
-  static const String initialRoute = '/';
+  static const String initialRoute = loginScreen;
 
   static List<GetPage> pages = [
     GetPage(
@@ -33,10 +36,6 @@ class AppRoutes {
       page: () => AppNavigationScreen(),
       bindings: [AppNavigationBinding()],
     ),
-    GetPage(
-      name: initialRoute,
-      page: () => AppNavigationScreen(),
-      bindings: [AppNavigationBinding()],
-    ),
+    GetPage(name: loginScreen, page: () => const TelaLogin()),
   ];
 }
