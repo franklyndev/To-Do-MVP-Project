@@ -10,10 +10,7 @@ class AuthController extends ChangeNotifier {
   bool isLoading = false;
   String? errorMessage;
 
-  Future<bool> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<bool> login({required String email, required String password}) async {
     try {
       isLoading = true;
       errorMessage = null;
@@ -52,11 +49,7 @@ class AuthController extends ChangeNotifier {
       errorMessage = null;
       notifyListeners();
 
-      await _authService.register(
-        name: name,
-        email: email,
-        password: password,
-      );
+      await _authService.register(name: name, email: email, password: password);
 
       return true;
     } catch (error) {
